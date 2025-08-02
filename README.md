@@ -57,11 +57,11 @@ git clone https://github.com/yourusername/gmail-ai-calendar-bot.git
 cd gmail-ai-calendar-bot
 
 ### 2️⃣ Install dependencies
-'''bash
+```bash
 pip install -r requirements.txt
 
 ### 3️⃣ Add HuggingFace Token
-'''ini
+
 HF_TOKEN=your_huggingface_api_token_here
 
 ###4️⃣ Set up Google APIs
@@ -70,7 +70,7 @@ HF_TOKEN=your_huggingface_api_token_here
 2) Download credentials.json and place it in the project root.
 
 ###5️⃣ Run the App
-'''bash 
+```bash
 python app.py
 
 ###🚀 Future Improvements
