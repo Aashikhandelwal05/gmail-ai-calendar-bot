@@ -55,25 +55,32 @@ AgenticAI/
 ```bash
 git clone https://github.com/yourusername/gmail-ai-calendar-bot.git
 cd gmail-ai-calendar-bot
-
+```
 ### 2️⃣ Install dependencies
 ```bash
 pip install -r requirements.txt
+```
+
 
 ### 3️⃣ Add HuggingFace Token
+```ini
 
 HF_TOKEN=your_huggingface_api_token_here
+```
 
-###4️⃣ Set up Google APIs
+### 4️⃣ Set up Google APIs
+```
 1) Enable Gmail API & Google Calendar API on Google Cloud Console.
 
 2) Download credentials.json and place it in the project root.
+```
 
-###5️⃣ Run the App
+### 5️⃣ Run the App
 ```bash
 python app.py
+```
 
-###🚀 Future Improvements
+### 🚀 Future Improvements
 🔹 Deploy as a background service (auto-check emails periodically)
 
 🔹 Web interface for easier client use
