@@ -78,7 +78,8 @@ HF_TOKEN=your_huggingface_api_token_here
 ### 5️⃣ Run the App
 ```bash
 python app.py
-```
+``` 
+---
 
 ### 🚀 Future Improvements
 🔹 Deploy as a background service (auto-check emails periodically)
@@ -87,3 +88,10 @@ python app.py
 
 🔹 Support for multiple email accounts
 
+---
+
+## 👤 Author
+**Aashi Khandelwal**  
+
+- 🌐 [LinkedIn](www.linkedin.com/in/aashikhandelwal/)  
+- 🐙 [GitHub](https://github.com/Aashikhandelwal05)  
