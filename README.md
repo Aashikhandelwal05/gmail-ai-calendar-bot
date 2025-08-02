@@ -26,6 +26,7 @@ An **AI-powered automation tool** that reads Gmail emails, extracts meeting deta
 ---
 
 ## 📂 Project Structure
+```
 AgenticAI/
 │ app.py # Main entry point
 │ gmail_api.py # Gmail API integration
@@ -35,7 +36,7 @@ AgenticAI/
 │ .env # HuggingFace API key (not uploaded)
 │ .gitignore # Ignore secrets/tokens
 └─── pycache/ # Auto-generated
-
+```
 
 
 ---
