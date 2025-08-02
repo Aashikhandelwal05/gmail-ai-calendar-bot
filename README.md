@@ -93,5 +93,6 @@ python app.py
 ## 👤 Author
 **Aashi Khandelwal**  
 
-- 🌐 [LinkedIn](www.linkedin.com/in/aashikhandelwal/)  
+- 🌐 [LinkedIn](https://www.linkedin.com/in/aashikhandelwal)
+ 
 - 🐙 [GitHub](https://github.com/Aashikhandelwal05)  
