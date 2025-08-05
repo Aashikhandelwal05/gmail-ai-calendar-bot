@@ -7,8 +7,11 @@ from dateparser.search import search_dates
 load_dotenv()
 HF_TOKEN = os.getenv("HF_TOKEN")
 
+# HuggingFace API endpoints
 SUMMARIZER_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-cnn"
 QA_URL = "https://api-inference.huggingface.co/models/deepset/roberta-base-squad2"
+CLASSIFIER_URL = "https://api-inference.huggingface.co/models/facebook/bart-large-mnli"
+
 headers = {"Authorization": f"Bearer {HF_TOKEN}"}
 
 # ---------------- Regex fallback ----------------
@@ -19,12 +22,66 @@ def extract_date_time_regex(text):
 
     date, time = None, None
     if date_match:
-        try: date = parser.parse(date_match.group(1)).strftime("%Y-%m-%d")
-        except: pass
+        try:
+            date = parser.parse(date_match.group(1)).strftime("%Y-%m-%d")
+        except:
+            pass
     if time_match:
-        try: time = parser.parse(time_match.group(1)).strftime("%H:%M")
-        except: pass
+        try:
+            time = parser.parse(time_match.group(1)).strftime("%H:%M")
+        except:
+            pass
     return date, time
+
+# ---------------- AI Meeting Classifier ----------------
+def is_meeting_email(text):
+    """Hybrid approach: AI classification + keyword cross-check."""
+    payload = {
+        "inputs": text,
+        "parameters": {"candidate_labels": ["meeting", "not a meeting"]}
+    }
+    res = requests.post(CLASSIFIER_URL, headers=headers, json=payload).json()
+    print("[DEBUG] Classifier Response:", res)
+
+    # Default fallback
+    if "labels" not in res or "scores" not in res:
+        return False
+
+    top_label = res["labels"][0]
+    confidence = res["scores"][0]
+
+    # Keyword backup check
+    keywords = ["meeting", "schedule", "invite", "appointment", "zoom", "google meet", "conference", "call"]
+    has_keyword = any(word in text.lower() for word in keywords)
+
+    print(f"[DEBUG] Prediction: {top_label}, Confidence: {confidence:.2f}, KeywordFound: {has_keyword}")
+
+    # ✅ Only allow meetings if AI confidence is high OR both AI low confidence + keywords present
+    return (top_label == "meeting" and confidence > 0.80) or (has_keyword and confidence > 0.65)
+def is_meeting_email(text):
+    """Hybrid approach: AI classification + keyword cross-check."""
+    payload = {
+        "inputs": text,
+        "parameters": {"candidate_labels": ["meeting", "not a meeting"]}
+    }
+    res = requests.post(CLASSIFIER_URL, headers=headers, json=payload).json()
+    print("[DEBUG] Classifier Response:", res)
+
+    # Default fallback
+    if "labels" not in res or "scores" not in res:
+        return False
+
+    top_label = res["labels"][0]
+    confidence = res["scores"][0]
+
+    # Keyword backup check
+    keywords = ["meeting", "schedule", "invite", "appointment", "zoom", "google meet", "conference", "call"]
+    has_keyword = any(word in text.lower() for word in keywords)
+
+    print(f"[DEBUG] Prediction: {top_label}, Confidence: {confidence:.2f}, KeywordFound: {has_keyword}")
+
+    # ✅ Only allow meetings if AI confidence is high OR both AI low confidence + keywords present
+    return (top_label == "meeting" and confidence > 0.80) or (has_keyword and confidence > 0.65)
 
 # ---------------- AI Q&A extractor ----------------
 def ai_extract_meeting_info(email_text):
@@ -43,13 +100,14 @@ def ai_extract_meeting_info(email_text):
     parsed_date = None
     if date_ai:
         d = dateparser.parse(date_ai)
-        if d: parsed_date = d.strftime("%Y-%m-%d")
-
+        if d:
+            parsed_date = d.strftime("%Y-%m-%d")
     if not parsed_date:
         found = search_dates(email_text)
-        if found: parsed_date = found[0][1].strftime("%Y-%m-%d")
+        if found:
+            parsed_date = found[0][1].strftime("%Y-%m-%d")
 
-    # --- location filtering ---
+    # --- location fallback ---
     if location_ai and re.search(r"\d{4}", location_ai):
         location_ai = "Online"
 
@@ -60,7 +118,7 @@ def ai_extract_meeting_info(email_text):
         "location": location_ai or "Online"
     }
 
-# ---------------- Summarizer ----------------
+# ---------------- AI Summarizer ----------------
 def summarize_email(text):
     payload = {"inputs": text}
     r = requests.post(SUMMARIZER_URL, headers=headers, json=payload).json()
@@ -80,10 +138,11 @@ def summarize_and_extract_meeting(email_text):
 
     # normalize time
     if info["time"]:
-        try: info["time"] = dateparser.parse(info["time"]).strftime("%H:%M")
-        except: info["time"] = "09:00"
+        try:
+            info["time"] = dateparser.parse(info["time"]).strftime("%H:%M")
+        except:
+            info["time"] = "09:00"
 
     return summary, info
-
 
 

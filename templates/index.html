@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agentic AI Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding: 30px; background: #f8f9fa; }
+        .card { margin-top: 20px; }
+        #result { white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">🤖 Agentic AI Email Assistant</h2>
+        <p class="text-center">Summarizes emails & creates calendar events automatically!</p>
+
+        <button class="btn btn-primary w-100" onclick="runBot()">🚀 Run Bot</button>
+
+        <div class="card" id="output-card" style="display:none;">
+            <div class="card-body">
+                <h5>📄 Summary</h5>
+                <p id="summary"></p>
+                <h5>📅 Meeting Info</h5>
+                <pre id="meeting-info"></pre>
+                <h5>🔗 Event Link</h5>
+                <a href="#" id="event-link" target="_blank"></a>
+            </div>
+        </div>
+    </div>
+
+<script>
+function runBot() {
+    fetch("/run-bot")
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("output-card").style.display = "block";
+        document.getElementById("summary").innerText = data.summary || "No summary";
+        if (data.meeting_info) {
+            let mi = data.meeting_info;
+            document.getElementById("meeting-info").innerHTML = 
+                `<b>Date:</b> ${mi.date || 'N/A'}<br>
+                <b>Time:</b> ${mi.time || 'N/A'}<br>
+                <b>Location:</b> ${mi.location || 'N/A'}<br>
+                <b>Title:</b> ${mi.title || 'N/A'}`;
+}       else {
+            document.getElementById("meeting-info").innerText = "No meeting info detected.";
+}
+
+        document.getElementById("event-link").href = data.event_link || "#";
+        document.getElementById("event-link").innerText = data.event_link;
+    });
+}
+</script>
+</body>
+</html>
+
